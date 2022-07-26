@@ -145,12 +145,20 @@ export default class {
       this.counter ++
     }
 
+    /** Modified Code *************************** */
     bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
-    })
+      $(`#open-bill${bill.id}`).click((e) => {
+        e.stopImmediatePropagation();
+        this.handleEditTicket(e, bill, bills)
+      });
+    });
+    /** End Modified Code *********************** */
+
+    // bills.forEach(bill => {
+    //   $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+    // })
 
     return bills
-
   }
 
   getBillsAllUsers = () => {

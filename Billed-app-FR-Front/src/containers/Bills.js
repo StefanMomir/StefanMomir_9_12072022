@@ -2,16 +2,6 @@ import { ROUTES_PATH } from '../constants/routes.js'
 import { formatDate, formatStatus } from "../app/format.js"
 import Logout from "./Logout.js"
 
-function sortByDate(a, b) {
-  if (a.date < b.date) {
-      return 1;
-  }
-  if (a.date > b.date) {
-      return -1;
-  }
-  return 0;
-}
-
 export default class {
   constructor({ document, onNavigate, store, localStorage }) {
     this.document = document
@@ -25,8 +15,6 @@ export default class {
     })
     new Logout({ document, localStorage, onNavigate })
   }
-
-
 
   handleClickNewBill = () => {
     this.onNavigate(ROUTES_PATH['NewBill'])
@@ -45,26 +33,12 @@ export default class {
       .bills()
       .list()
       .then(snapshot => {
-
-        const sorted = snapshot.sort(sortByDate);
-        //console.log(sorted); 
-
-
-        //console.log(snapshot);
-      let test5 = snapshot.map(obj => {
-        return {...obj, date: new Date(obj.date)};
-      });
-      let sortedAsc = test5.sort(
-        (objA, objB) => (objB.date) - (objA.date),
-      );
-        console.log(snapshot);
-        const bills = sorted
+        const bills = snapshot
           .map(doc => {
-     //       console.log(formatDate(doc.date))
-         //   console.log(formatDate(doc.date))
             try {
               return {
                 ...doc,
+                newDate: doc.date, /* ** Added Line  *** */
                 date: formatDate(doc.date),
                 status: formatStatus(doc.status)
               }
@@ -74,12 +48,12 @@ export default class {
               console.log(e,'for',doc)
               return {
                 ...doc,
-                date: formatDate(doc.date)//.sort((a, b) => b.dates - a.dates)
-                ,status: formatStatus(doc.status)
+                date: doc.date,
+                status: formatStatus(doc.status)
               }
             }
           })
-          console.log('length', bills.length)
+        //  console.log('length', bills.length)
         return bills
       })
     }
