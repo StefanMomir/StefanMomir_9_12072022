@@ -1,7 +1,7 @@
 import { ROUTES_PATH } from '../constants/routes.js'
 import Logout from "./Logout.js"
 
-/** REGEX Validation ****************************/
+/** Added Code REGEX Validation ****************************/
 const validation = (validate) => {
   const testValidation = /\.(jpe?g|png)$/i;
     validate = validate.match(testValidation);
@@ -30,20 +30,20 @@ export default class NewBill {
     const targetFileInput = this.document.querySelector(`input[data-testid="file"]`)
     const preventSubmit = this.document.querySelector('#btn-send-bill');
     const file = targetFileInput.files[0];
+    const validate = validation(file.name);
+    const errorMessage = this.document.querySelector('.error');
+    if(errorMessage) errorMessage.innerHTML="";
+    /* No Modification */
     const filePath = e.target.value.split(/\\/g)
     const fileName = filePath[filePath.length-1]
-    const validate = validation(file.name);
-
+    const formData = new FormData()
+    const email = JSON.parse(localStorage.getItem("user")).email
+    formData.append('file', file)
+    formData.append('email', email)
+    /* End No Modification */
     if(validate){
       preventSubmit.disabled = false;
-      if(this.document.querySelector('.error')){
-        this.document.querySelector('.error').classList.add('hide');
-      }
-      const formData = new FormData()
-      const email = JSON.parse(localStorage.getItem("user")).email
-      formData.append('file', file)
-      formData.append('email', email)
-  
+      /* No Modification */
       this.store
         .bills()
         .create({
@@ -57,43 +57,16 @@ export default class NewBill {
           this.fileUrl = fileUrl
           this.fileName = fileName
         }).catch(error => console.error(error))
+      /* End No Modification */
     }
     else {
       preventSubmit.disabled = true;
-      targetFileInput.insertAdjacentHTML('afterend', `<div class="error">Selected file is 
-      not a valid image. Only JPG, JPEG and PNG files are allowed !</div>`);
+      targetFileInput.insertAdjacentHTML('afterend', `<div data-testid="error" 
+      class="error">Le fichier sélectionné n'est pas une image valide. 
+      Seuls les fichiers JPG, JPEG et PNG sont autorisés !</div>`);
     }
   }
   /** End Modified Code ***********************************************************************/
-
-
-  /*
-  handleChangeFile = e => {
-    e.preventDefault()
-    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
-    const formData = new FormData()
-    const email = JSON.parse(localStorage.getItem("user")).email
-    formData.append('file', file)
-    formData.append('email', email)
-
-    this.store
-      .bills()
-      .create({
-        data: formData,
-        headers: {
-          noContentType: true
-        }
-      })
-      .then(({fileUrl, key}) => {
-        console.log(fileUrl)
-        this.billId = key
-        this.fileUrl = fileUrl
-        this.fileName = fileName
-      }).catch(error => console.error(error))
-  }
-*/
 
   handleSubmit = e => {
     e.preventDefault()
