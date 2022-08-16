@@ -69,6 +69,7 @@ export default class NewBill {
   /** End Modified Code ***********************************************************************/
 
   handleSubmit = e => {
+    debugger
     e.preventDefault()
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
